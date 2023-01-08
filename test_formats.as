@@ -1,8 +1,8 @@
 ﻿/**************************  tests_formats.as  ********************************
 * Author:        Agner Fog
 * date created:  2021-07-13
-* last modified: 2021-08-04
-* Version:       1.11
+* last modified: 2023-01-08
+* Version:       1.12
 * Project:       ForwardCom Test suite, assembly code
 * Description:   Test the different instruction formats
 *
@@ -10,12 +10,13 @@
 * registers, including formats for multi-format instructions, single-format
 * instructions, and jump instructions.
 *
-* Copyright 2021 GNU General Public License v. 3 http://www.gnu.org/licenses
+* Copyright 2021-2023 GNU General Public License v. 3
+* http://www.gnu.org/licenses
 ******************************************************************************/
 
 // Library functions in libc_light.li
-extern _printf:   function reguse=0xF,0          // write formatted string to stdout
-extern _sprintf:  function reguse=0xF,0          // write formatted string to string buffer
+extern _printf_light:  function reguse=0xF,0     // write formatted string to stdout
+extern _sprintf_light: function reguse=0xF,0     // write formatted string to string buffer
 
 const section read ip                            // read-only data section
 
@@ -46,12 +47,12 @@ _main function public
 
 // print intro text and heading
 int64  r0 = address [introtext]                  // intro text
-call   _printf                                   // print string
+call   _printf_light                                   // print string
 
 breakpoint
 
 int64  r0 = address [multiformat]
-call   _printf                                   // print string
+call   _printf_light                                   // print string
 
 
 // disable error trap for unknown instructions and array bounds violation
@@ -195,7 +196,7 @@ call   print_result
 
 
 int64 r0 = address [press_run]
-call _printf
+call _printf_light
 
 breakpoint
 
@@ -262,12 +263,12 @@ call   print_result
 
 
 int64 r0 = address [press_run]
-call _printf
+call _printf_light
 
 breakpoint
 
 int64 r0 = address [singleformat]
-call _printf
+call _printf_light
 
 
 // format 1.0 A  Single format RD = f2(RS, RT). unused
@@ -336,7 +337,7 @@ call   print_result
 
 
 int64 r0 = address [jumpformat]
-call _printf
+call _printf_light
 
 
 // Test format 1.6 B
@@ -434,7 +435,7 @@ call   print_result
 
 
 int64 r0 = address [newline]
-call _printf
+call _printf_light
 
 breakpoint
 
@@ -474,7 +475,7 @@ for (int ; r5 >= 0; r5 -= 4) {
   int64  r0 = r4               // string buffer
   int64  r1 = address [format1]// format string
   int64  r2 = sp               // parameter list
-  call   _sprintf              // put part of format name in string buffer
+  call   _sprintf_light        // put part of format name in string buffer
   int64  r4 += 2               // advance string buffer pointer
 }
 
@@ -484,7 +485,7 @@ int64  [sp] = r4             // format name
 int64  [sp+8] = r6           // 'Y' if success
 int64  r0 = address [format2]// format string
 int64  r1 = sp               // parameter list
-call   _printf               // write to stdout
+call   _printf_light         // write to stdout
 
 int64 sp += 64               // free stack space
 return
